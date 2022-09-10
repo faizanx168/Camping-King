@@ -20,6 +20,7 @@ for(let i = 0; i <50 ; i++){
     const randomNum = Math.floor(Math.random()*1000);
     const price = Math.floor(Math.random()*20) +10;
     const camp = new Camp({
+        author: '631aa35829fb338ddaab3e0f',
         title: `${sample(descriptors)} ${sample(places)}`,
         location: `${cities[randomNum].city} , ${cities[randomNum].state}`,
         image: 'https://source.unsplash.com/collection/483251',

@@ -5,14 +5,16 @@ const mongoose = require('mongoose');
 const method = require('method-override');
 const ejsMate = require('ejs-mate');
 const joi = require('joi');
-const campgrounds = require("./routes/campgrounds")
-const reviews = require("./routes/reviews")
-// const { campSchema } = require('./joiSchema');
-// const { reviewSchema } = require('./joiSchema');
-// const Review = require('./models/reviews');
-// const myError = require('./utils/ExpressErrors');
-// const asyncError = require('./utils/AsyncError.js');
-// const Camp = require('./models/camp')
+const campgrounds = require("./routes/campgrounds");
+const reviews = require("./routes/reviews");
+const session = require('express-session')
+const flash = require('connect-flash');
+const passport = require('passport');
+const localPass = require('passport-local');
+const User = require('./models/user');
+const register = require('./routes/user.js');
+const myError = require('./utils/ExpressErrors');
+
 
 mongoose.connect('mongodb://localhost:27017/camp-king', {useNewUrlparser: true, useUnifiedTopology: true});
 const db = mongoose.connection;
@@ -29,10 +31,39 @@ app.use(express.urlencoded({extended: true}));
 app.use(method('_method'));
 app.use(express.static(path.join(__dirname, 'public')));
 
+
+const sessionConfig = {
+    secret: 'asdffgkhlkhlkfph',
+    resave: false,
+    saveUninitialized: true, 
+    cookie:{
+        expires: Date.now() + 1000 * 60 *60 * 24,
+        httpOnly: true,
+        maxAge: 1000 * 60 *60 * 24 * 2,
+    }
+}
+app.use(session(sessionConfig));
+app.use(flash());
+app.use(passport.initialize());
+app.use(passport.session());
+passport.use(new localPass(User.authenticate()));
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
+app.use((req, res, next)=>{
+    if(!['/login','/'].includes(req.originalUrl)){
+        req.session.returnTo = req.originalUrl;
+    }
+    res.locals.user = req.user;
+    res.locals.success = req.flash('success');
+    res.locals.error = req.flash('error');
+    next();
+})
+
+app.use('/', register );
 app.get('/', (req,res)=>{
     res.render('home');
 })
-
 app.use('/campgrounds', campgrounds);
 app.use('/campgrounds/:id/reviews', reviews);
 
