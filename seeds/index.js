@@ -23,7 +23,10 @@ for(let i = 0; i <50 ; i++){
         author: '631aa35829fb338ddaab3e0f',
         title: `${sample(descriptors)} ${sample(places)}`,
         location: `${cities[randomNum].city} , ${cities[randomNum].state}`,
-        image: 'https://source.unsplash.com/collection/483251',
+        image:[{
+         url: 'https://source.unsplash.com/collection/483251',
+         filename: 'seeds/splashimage'
+        }],
         description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Cumque molestiae tempore eligendi itaque vel accusamus fugiat ad aspernatur doloribus nesciunt, facilis, nisi obcaecati sit optio sapiente animi reiciendis quaerat. Illo.',
         price: price
     })
